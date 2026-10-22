@@ -1,0 +1,11 @@
+<div class="page-heading">
+  <div>
+    <p class="eyebrow">MY WORK</p>
+    <h1>My Calendar</h1>
+    <p class="page-subtitle">Your assigned tasks on their due dates.</p>
+  </div>
+
+  <%= link_to "List view", my_tasks_path, class: "secondary-button" %>
+</div>
+
+<%= render "calendars/month", tasks: @tasks %>

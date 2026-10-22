@@ -1,0 +1,174 @@
+<div class="dashboard-page">
+
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">ADMINISTRATION</p>
+      <h1>Admin Dashboard</h1>
+      <p class="page-subtitle">
+        Overview of users, projects and tasks.
+      </p>
+    </div>
+  </div>
+
+  <div class="dashboard-stats">
+
+    <div class="stat-card">
+      <span class="stat-label">Total Users</span>
+      <strong><%= @total_users %></strong>
+    </div>
+
+    <div class="stat-card">
+      <span class="stat-label">Managers</span>
+      <strong><%= @total_managers %></strong>
+    </div>
+
+    <div class="stat-card">
+      <span class="stat-label">Projects</span>
+      <strong><%= @total_projects %></strong>
+    </div>
+
+    <div class="stat-card">
+      <span class="stat-label">Tasks</span>
+      <strong><%= @total_tasks %></strong>
+    </div>
+
+  </div>
+
+  <div class="dashboard-columns">
+
+    <section class="dashboard-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">RECENT</p>
+          <h2>Users</h2>
+        </div>
+
+        <%= link_to "View All", users_path, class: "text-link" %>
+      </div>
+
+      <div class="compact-grid">
+        <% @recent_users.each do |user| %>
+
+          <div class="compact-card">
+          
+          <%= user_avatar(user, size: 44) %>
+
+            <div class="compact-content">
+              <h3>
+                <%= link_to user.name, user_path(user) %>
+              </h3>
+
+              <p><%= user.email %></p>
+
+              <span class="role-badge">
+                <%= user.role.humanize %>
+              </span>
+            </div>
+
+          </div>
+
+        <% end %>
+      </div>
+    </section>
+
+
+    <section class="dashboard-panel">
+
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">RECENT</p>
+          <h2>Projects</h2>
+        </div>
+
+        <%= link_to "View All", projects_path, class: "text-link" %>
+      </div>
+
+      <div class="compact-grid">
+
+        <% @recent_projects.each do |project| %>
+
+          <div class="compact-card">
+
+            <div class="project-icon">
+              P
+            </div>
+
+            <div class="compact-content">
+
+              <h3>
+                <%= link_to project.name, project_path(project) %>
+              </h3>
+
+              <p>
+                <%= truncate(project.description.to_s, length: 70) %>
+              </p>
+
+              <span class="small-meta">
+                <%= pluralize(project.tasks.count, "task") %>
+              </span>
+
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <section class="dashboard-panel dashboard-panel-full">
+
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">RECENT</p>
+        <h2>Tasks</h2>
+      </div>
+    </div>
+
+    <div class="task-grid">
+
+      <% @recent_tasks.each do |task| %>
+
+        <div class="task-card">
+
+          <div class="task-card-top">
+
+            <h3>
+              <%= task.title %>
+            </h3>
+
+            <span class="status-badge status-<%= task.status %>">
+              <%= task.status.humanize %>
+            </span>
+
+          </div>
+
+          <p>
+            <%= truncate(task.description.to_s, length: 90) %>
+          </p>
+
+          <div class="task-card-footer">
+
+            <span>
+              <%= task.user&.name || "Unassigned" %>
+            </span>
+
+            <span>
+              <%= task.project.name %>
+            </span>
+
+          </div>
+
+        </div>
+
+      <% end %>
+
+    </div>
+
+  </section>
+
+</div>

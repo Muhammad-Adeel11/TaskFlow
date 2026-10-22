@@ -1,0 +1,73 @@
+<div class="page-heading">
+  <div>
+    <p class="eyebrow">MY WORK</p>
+    <h1>My Tasks</h1>
+    <p class="page-subtitle">
+      Tasks currently assigned to <%= current_user.name %>.
+    </p>
+  </div>
+  <%= link_to "Calendar view", my_calendar_path, class: "secondary-button" %>
+</div>
+
+<%= render "tasks/filters", q: @q, url: my_tasks_path, projects: @projects %>
+
+<% if @tasks.any? %>
+  <div class="task-list">
+    <% @tasks.each do |task| %>
+      <article class="task-card">
+        <div class="task-main">
+          <h3><%= task.title %></h3>
+
+          <p>
+            Project:
+            <%= link_to task.project.name, project_path(task.project) %>
+          </p>
+
+          <% if task.description.present? %>
+            <p><%= task.description %></p>
+          <% end %>
+        </div>
+
+<div class="task-info">
+  <span class="status-badge status-<%= task.status %>">
+    <%= task.status.humanize %>
+  </span>
+
+  <span class="due-date">
+    <%= task.due_date ? task.due_date.strftime("%d %b %Y") : "No due date" %>
+  </span>
+
+  <%= form_with url: update_my_status_path(task),
+      method: :patch,
+      class: "status-form" do |form| %>
+
+    <%= form.select :status,
+        [["Pending", "pending"],
+         ["In Progress", "in_progress"],
+         ["Completed", "completed"]],
+        { selected: task.status } %>
+
+    <%= form.submit "Update", class: "secondary-button" %>
+  <% end %>
+</div>
+      </article>
+    <% end %>
+  </div>
+
+  <div class="pagination">
+    <%= paginate @tasks %>  
+  </div>
+
+<% else %>
+  <div class="empty-state">
+    <div class="empty-icon">✓</div>
+    <% if filters_active? %>
+      <h2>No tasks match your filters</h2>
+      <p>Try changing or clearing the filters.</p>
+      <%= link_to "Clear filters", my_tasks_path, class: "secondary-button" %>
+    <% else %>
+      <h2>No tasks assigned</h2>
+      <p>You currently don't have any tasks assigned to you.</p>
+    <% end %>
+  </div>
+<% end %>

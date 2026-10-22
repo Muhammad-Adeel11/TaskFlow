@@ -1,0 +1,69 @@
+<div class="form-page">
+  <div class="form-heading">
+    <p class="eyebrow">NEW TASK</p>
+    <h1>Create a Task</h1>
+    <p>Add a new task to <strong><%= @project.name %></strong>.</p>
+  </div>
+
+  <div class="form-card">
+    <%= form_with model: [@project, @task] do |form| %>
+      <% if @task.errors.any? %>
+        <div class="form-errors">
+          <strong>Please fix the following:</strong>
+
+          <ul>
+            <% @task.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-field">
+        <%= form.label :title, "Task Title" %>
+        <%= form.text_field :title, placeholder: "e.g. Design homepage" %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :description, "Description" %>
+        <%= form.text_area :description,
+            placeholder: "Describe what needs to be done...",
+            rows: 5 %>
+      </div>
+
+<div class="form-row">
+
+  <div class="form-field">
+    <%= form.label :status, "Status" %>
+
+    <%= form.select :status,
+        [["Pending", "pending"],
+         ["In Progress", "in_progress"],
+         ["Completed", "completed"]] %>
+  </div>
+
+  <div class="form-field">
+    <%= form.label :due_date, "Due Date" %>
+
+    <%= form.date_field :due_date %>
+  </div>
+
+</div>
+
+<div class="form-field">
+  <%= form.label :user_id, "Assign To" %>
+
+  <%= form.collection_select :user_id,
+      @users,
+      :id,
+      :name,
+      { prompt: "Select a user" } %>
+</div>
+
+      <div class="form-actions">
+        <%= link_to "Cancel", project_path(@project), class: "cancel-button" %>
+        <%= form.submit "Create Task", class: "primary-button" %>
+      </div>
+    <% end %>
+  </div>
+</div>

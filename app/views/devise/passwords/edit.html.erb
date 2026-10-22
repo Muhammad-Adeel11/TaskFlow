@@ -1,0 +1,31 @@
+<div class="form-page auth-page">
+  <div class="form-heading">
+    <p class="eyebrow">TASKFLOW</p>
+    <h1>Set a new password</h1>
+    <p>Choose a new password for your account.</p>
+  </div>
+
+  <div class="form-card">
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name),
+                 html: { method: :put }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+      <%= f.hidden_field :reset_password_token %>
+
+      <div class="form-field">
+        <%= f.label :password, "New password" %>
+        <%= f.password_field :password, autofocus: true, autocomplete: "new-password",
+            placeholder: "At least #{@minimum_password_length || 6} characters" %>
+      </div>
+
+      <div class="form-field">
+        <%= f.label :password_confirmation, "Confirm new password" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password",
+            placeholder: "Repeat your new password" %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "Change my password", class: "primary-button" %>
+      </div>
+    <% end %>
+  </div>
+</div>

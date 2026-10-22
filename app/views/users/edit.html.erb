@@ -1,0 +1,94 @@
+<div class="form-page">
+
+  <div class="form-heading">
+    <p class="eyebrow">EDIT USER</p>
+    <h1>Edit User</h1>
+    <p>Update the user's information.</p>
+  </div>
+
+  <div class="form-card">
+
+    <%= form_with model: @user do |form| %>
+
+      <% if @user.errors.any? %>
+        <div class="form-errors">
+          <strong>Please fix the following:</strong>
+          <ul>
+            <% @user.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-field">
+        <%= form.label :name, "Full Name" %>
+        <%= form.text_field :name, placeholder: "Enter full name" %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :email, "Email" %>
+        <%= form.email_field :email, placeholder: "Enter email" %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :avatar, "Profile photo" %>
+
+        <div class="avatar-field-row">
+          <%= user_avatar(@user, size: 72) %>
+
+          <div class="avatar-field-controls">
+            <%= form.hidden_field :avatar, value: @user.avatar.signed_id if @user.avatar.attached? %>
+            <%= form.file_field :avatar, direct_upload: true,
+                accept: "image/png,image/jpeg,image/webp,image/gif" %>
+            <small>PNG, JPG, WEBP or GIF, up to 2 MB.</small>
+          </div>
+        </div>
+      </div>
+
+      <% if current_user == @user %>
+        <div class="form-field">
+          <%= form.label :password, "New Password" %>
+          <%= form.password_field :password,
+              placeholder: "Leave blank to keep current password",
+              autocomplete: "new-password" %>
+        </div>
+
+        <div class="form-field">
+          <%= form.label :password_confirmation, "Confirm New Password" %>
+          <%= form.password_field :password_confirmation,
+              placeholder: "Confirm new password",
+              autocomplete: "new-password" %>
+        </div>
+      <% end %>
+
+      <% if current_user.admin? && @user != current_user %>
+        <div class="form-field">
+          <%= form.label :role, "Role" %>
+          <%= form.select :role,
+              [["User", "user"], ["Manager", "manager"]],
+              { selected: @user.role } %>
+        </div>
+      <% end %>
+
+      <div class="form-actions">
+        <%= link_to "Cancel", user_path(@user), class: "cancel-button" %>
+        <%= form.submit "Update User", class: "primary-button" %>
+      </div>
+
+    <% end %>
+
+  </div>
+
+  <% if @user.avatar.attached? %>
+    <div class="form-card avatar-remove-card">
+      <p>This user has a profile photo.</p>
+
+      <%= button_to "Remove photo", user_avatar_path(@user),
+          method: :delete,
+          class: "danger-button",
+          form: { data: { turbo_confirm: "Remove this profile photo?" } } %>
+    </div>
+  <% end %>
+
+</div>

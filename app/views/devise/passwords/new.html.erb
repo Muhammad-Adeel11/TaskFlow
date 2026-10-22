@@ -1,0 +1,26 @@
+<div class="form-page auth-page">
+  <div class="form-heading">
+    <p class="eyebrow">TASKFLOW</p>
+    <h1>Forgot your password?</h1>
+    <p>Enter your email and we'll send you a reset link.</p>
+  </div>
+
+  <div class="form-card">
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name),
+                 html: { method: :post }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <div class="form-field">
+        <%= f.label :email, "Email" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email",
+            placeholder: "you@example.com" %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "Send reset link", class: "primary-button" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "devise/shared/links" %>
+</div>

@@ -1,0 +1,102 @@
+<div class="project-header">
+  <div class="profile-head">
+    <%= user_avatar(@user, size: 84) %>
+
+    <div>
+      <p class="eyebrow">TEAM MEMBER</p>
+      <h1><%= @user.name %></h1>
+      <p class="project-header-description"><%= @user.email %></p>
+
+      <div class="profile-meta">
+        <span class="profile-role"><%= @user.role.to_s.humanize %></span>
+        <span>Member since <%= @user.created_at.strftime("%b %Y") %></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="project-actions">
+    <%= link_to "Edit", edit_user_path(@user), class: "secondary-button" %>
+  </div>
+</div>
+
+<div class="profile-stats">
+  <% [["Pending", "pending"], ["In progress", "in_progress"], ["Completed", "completed"]].each do |label, key| %>
+    <div class="profile-stat">
+      <span><%= label %></span>
+      <strong><%= @task_stats.fetch(key, 0) %></strong>
+    </div>
+  <% end %>
+</div>
+
+<section class="tasks-section">
+
+  <div class="section-heading">
+    <div>
+      <h2>Assigned Tasks</h2>
+
+      <p>
+        Tasks currently assigned to <%= @user.name %>.
+      </p>
+    </div>
+  </div>
+
+  <% if @tasks.any? %>
+
+    <div class="task-list">
+
+      <% @tasks.each do |task| %>
+
+        <article class="task-card">
+
+          <div class="task-main">
+            <h3><%= task.title %></h3>
+
+            <p>
+              Project:
+              <%= task.project.name %>
+            </p>
+          </div>
+
+          <div class="task-info">
+
+            <span class="status-badge status-<%= task.status %>">
+              <%= task.status.humanize %>
+            </span>
+
+            <span class="due-date">
+              <%= task.due_date ? task.due_date.strftime("%d %b %Y") : "No due date" %>
+            </span>
+
+          </div>
+
+          <div class="task-actions">
+
+            <%= link_to "View Project",
+                project_path(task.project),
+                class: "view-link" %>
+
+          </div>
+
+        </article>
+
+      <% end %>
+
+    </div>
+
+  <% else %>
+
+    <div class="empty-state task-empty">
+
+      <div class="empty-icon">✓</div>
+
+      <h2>No tasks assigned</h2>
+
+      <p>
+        This user currently has no assigned tasks.
+      </p>
+
+    </div>
+
+  <% end %>
+
+</section>

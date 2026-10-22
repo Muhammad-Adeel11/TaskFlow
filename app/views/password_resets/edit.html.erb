@@ -1,0 +1,65 @@
+<div class="auth-page">
+
+  <div class="auth-card">
+
+    <div class="auth-heading">
+      <p class="eyebrow">TASKFLOW</p>
+
+      <h1>Reset Password</h1>
+
+      <p>
+        Create a new password for your account.
+      </p>
+    </div>
+
+    <% if @user.errors.any? %>
+
+      <div class="form-errors">
+
+        <ul>
+          <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+
+      </div>
+
+    <% end %>
+
+    <%= form_with model: @user,
+        url: reset_password_path(params[:token]),
+        method: :patch do |form| %>
+
+      <div class="form-field">
+
+        <%= form.label :password, "New Password" %>
+
+        <%= form.password_field :password,
+            placeholder: "Enter new password",
+            required: true %>
+
+      </div>
+
+      <div class="form-field">
+
+        <%= form.label :password_confirmation,
+            "Confirm Password" %>
+
+        <%= form.password_field :password_confirmation,
+            placeholder: "Confirm new password",
+            required: true %>
+
+      </div>
+
+      <div class="auth-actions">
+
+        <%= form.submit "Reset Password",
+            class: "primary-button" %>
+
+      </div>
+
+    <% end %>
+
+  </div>
+
+</div>

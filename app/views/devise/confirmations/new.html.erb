@@ -1,0 +1,27 @@
+<div class="form-page auth-page">
+  <div class="form-heading">
+    <p class="eyebrow">TASKFLOW</p>
+    <h1>Resend confirmation</h1>
+    <p>We'll send the confirmation link to your inbox again.</p>
+  </div>
+
+  <div class="form-card">
+    <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name),
+                 html: { method: :post }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <div class="form-field">
+        <%= f.label :email, "Email" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email",
+            value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email),
+            placeholder: "you@example.com" %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "Resend confirmation email", class: "primary-button" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "devise/shared/links" %>
+</div>

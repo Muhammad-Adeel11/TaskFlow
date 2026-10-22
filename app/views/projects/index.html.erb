@@ -1,0 +1,98 @@
+<div class="page-heading">
+  <div>
+    <p class="eyebrow">WORKSPACE</p>
+    <h1>Your Projects</h1>
+    <p class="page-subtitle">Keep your projects and tasks organized in one place.</p>
+  </div>
+
+  <% if policy(Project).create? %>
+  <%= link_to "＋ New Project", "/projects/new", class: "primary-button" %>
+  <% end %>
+
+</div>
+
+<%= search_form_for @q, url: projects_path, html: { class: "filter-bar" } do |f| %>
+  <div class="form-field filter-search">
+    <%= f.label :name_or_description_cont, "Search" %>
+    <%= f.search_field :name_or_description_cont, placeholder: "Project name or description…" %>
+  </div>
+
+  <div class="form-field">
+    <%= label_tag "q_s", "Sort by" %>
+    <%= select_tag "q[s]",
+        options_for_select([["Oldest first", "id asc"], ["Newest first", "created_at desc"], ["Name A–Z", "name asc"]], params.dig(:q, :s)),
+        id: "q_s" %>
+  </div>
+
+  <div class="filter-actions">
+    <%= f.submit "Apply", class: "primary-button" %>
+    <%= link_to "Clear", projects_path, class: "cancel-button" %>
+  </div>
+<% end %>
+
+<% if @projects.any? %>
+  <div class="project-grid">
+    <% @projects.each do |project| %>
+      <article class="project-card">
+        <div class="project-card-top">
+          <div class="project-icon">
+            <%= project.name.first.upcase %>
+          </div>
+
+          <span class="project-label">PROJECT</span>
+        </div>
+
+        <h2>
+          <%= link_to project.name, project_path(project) %>
+        </h2>
+
+        <p class="project-description">
+          <%= project.description.presence || "No description added yet." %>
+        </p>
+
+        <div class="project-footer">
+          <span class="task-count">
+            <%= pluralize(project.tasks.count, "task") %>
+          </span>
+
+          <%= link_to "View Project →", project_path(project), class: "view-link" %>
+        </div>
+
+        <% if current_user.manager? %>
+          <div class="project-card-actions">
+            <% if policy(project).update? %>
+            <%= link_to "Edit", edit_project_path(project), class: "secondary-button" %>
+
+            <%= button_to "Delete",
+                project_path(project),
+                method: :delete,
+                class: "danger-button",
+                form: { data: { turbo_confirm: "Delete this project and all of its tasks? This cannot be undone." } } %>
+            <% end %>
+          </div>
+        <% end %>
+      </article>
+    <% end %>
+  </div>
+
+  <div class="pagination">
+    <%= paginate @projects %>
+  </div>
+
+
+   <% else %>
+  <div class="empty-state">
+    <div class="empty-icon">+</div>
+    <% if filters_active? %>
+      <h2>No projects match your search</h2>
+      <%= link_to "Clear search", projects_path, class: "secondary-button" %>
+    <% elsif policy(Project).create? %>
+      <h2>No projects yet</h2>
+      <p>Create your first project and start adding tasks.</p>
+      <%= link_to "Create Your First Project", "/projects/new", class: "primary-button" %>
+    <% else %>
+      <h2>No projects yet</h2>
+      <p>You haven't been added to any project. Ask a manager to add you.</p>
+    <% end %>
+  </div>
+<% end %>

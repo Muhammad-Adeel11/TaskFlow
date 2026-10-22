@@ -1,0 +1,14 @@
+<div class="project-header">
+  <div>
+    <p class="eyebrow">CALENDAR</p>
+    <h1><%= @project.name %></h1>
+    <p class="project-header-description">Tasks placed on their due dates.</p>
+  </div>
+
+  <div class="project-actions">
+    <%= link_to "List view", project_path(@project), class: "secondary-button" %>
+    <%= link_to "Board view", project_board_path(@project), class: "secondary-button" %>
+  </div>
+</div>
+
+<%= render "calendars/month", tasks: @tasks %>

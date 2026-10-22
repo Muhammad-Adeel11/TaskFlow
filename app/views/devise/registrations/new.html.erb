@@ -1,0 +1,42 @@
+<div class="form-page auth-page">
+  <div class="form-heading">
+    <p class="eyebrow">TASKFLOW</p>
+    <h1>Create your account</h1>
+    <p>We'll email you a link to confirm your address.</p>
+  </div>
+
+  <div class="form-card">
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <div class="form-field">
+        <%= f.label :name, "Full name" %>
+        <%= f.text_field :name, autofocus: true, autocomplete: "name",
+            placeholder: "e.g. Muhammad Adeel" %>
+      </div>
+
+      <div class="form-field">
+        <%= f.label :email, "Email" %>
+        <%= f.email_field :email, autocomplete: "email", placeholder: "you@example.com" %>
+      </div>
+
+      <div class="form-field">
+        <%= f.label :password, "Password" %>
+        <%= f.password_field :password, autocomplete: "new-password",
+            placeholder: "At least #{@minimum_password_length || 6} characters" %>
+      </div>
+
+      <div class="form-field">
+        <%= f.label :password_confirmation, "Confirm password" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password",
+            placeholder: "Repeat your password" %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "Create account", class: "primary-button" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "devise/shared/links" %>
+</div>

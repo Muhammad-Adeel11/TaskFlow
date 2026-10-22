@@ -1,0 +1,16 @@
+<h1>Welcome to TaskFlow</h1>
+
+<p>Hello <%= @user.name %>,</p>
+
+<p>
+  Please verify your email address to activate your TaskFlow account.
+</p>
+
+<p>
+  <%= link_to "Verify Email",
+      verify_email_url(@user.email_verification_token) %>
+</p>
+
+<p>
+  This verification link expires in 24 hours.
+</p>

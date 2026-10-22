@@ -1,0 +1,95 @@
+<div class="page-heading">
+  <div>
+    <p class="eyebrow">TEAM MANAGEMENT</p>
+    <h1>Users</h1>
+    <p class="page-subtitle">
+      Manage users and managers in the system.
+    </p>
+  </div>
+
+  <%= link_to "Add User", new_admin_user_path, class: "primary-button" %>
+</div>
+
+<%= search_form_for @q, url: users_path, html: { class: "filter-bar" } do |f| %>
+  <div class="form-field filter-search">
+    <%= f.label :name_or_email_cont, "Search" %>
+    <%= f.search_field :name_or_email_cont, placeholder: "Name or email…" %>
+  </div>
+
+  <div class="form-field">
+    <%= f.label :role_eq, "Role" %>
+    <%= f.select :role_eq, [["Admin", "admin"], ["Manager", "manager"], ["User", "user"]], { include_blank: "All roles" } %>
+  </div>
+
+  <div class="form-field">
+    <%= f.label :confirmation_state, "Email" %>
+    <%= f.select :confirmation_state, [["Confirmed", "confirmed"], ["Unconfirmed", "unconfirmed"]], { include_blank: "Any" } %>
+  </div>
+
+  <div class="filter-actions">
+    <%= f.submit "Apply", class: "primary-button" %>
+    <%= link_to "Clear", users_path, class: "cancel-button" %>
+  </div>
+<% end %>
+
+<% if @users.any? %>
+
+  <div class="user-grid">
+
+    <% @users.each do |user| %>
+
+      <article class="user-card">
+
+        <%= user_avatar(user, size: 52) %>
+
+        <div class="user-card-info">
+
+          <h2>
+            <%= link_to user.name, user_path(user) %>
+          </h2>
+
+          <p><%= user.email %></p>
+
+          <span class="user-task-count">
+            Role: <%= user.role&.humanize || "User" %>
+          </span>
+
+          <span class="user-task-count">
+            <%= pluralize(user.tasks.count, "assigned task") %>
+          </span>
+
+          <div class="user-card-actions">
+
+            <%= link_to "View",
+                user_path(user),
+                class: "secondary-button" %>
+
+            <%= link_to "Edit",
+                edit_user_path(user),
+                class: "secondary-button" %>
+
+            <% unless user == current_user %>
+              <%= button_to "Delete",
+                  user_path(user),
+                  method: :delete,
+                  class: "danger-button",
+                  data: { turbo_confirm: "Delete this user?" } %>
+            <% end %>
+          </div>
+        </div>
+      </article>
+    <% end %>
+  </div>
+
+  <div class="pagination">
+    <%= paginate @users %>
+  </div>
+
+<% else %>
+
+  <div class="empty-state">
+    <h2>No users found</h2>
+    <p>No registered users are available.</p>
+  </div>
+
+<% end %>

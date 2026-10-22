@@ -1,0 +1,35 @@
+<div class="form-page auth-page">
+  <div class="form-heading">
+    <p class="eyebrow">TASKFLOW</p>
+    <h1>Welcome back</h1>
+    <p>Log in to manage your projects and tasks.</p>
+  </div>
+
+  <div class="form-card">
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <div class="form-field">
+        <%= f.label :email, "Email" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email",
+            placeholder: "you@example.com" %>
+      </div>
+
+      <div class="form-field">
+        <%= f.label :password, "Password" %>
+        <%= f.password_field :password, autocomplete: "current-password",
+            placeholder: "Your password" %>
+      </div>
+
+      <% if devise_mapping.rememberable? %>
+        <label class="remember-me">
+          <%= f.check_box :remember_me %> Remember me
+        </label>
+      <% end %>
+
+      <div class="form-actions">
+        <%= f.submit "Log in", class: "primary-button" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "devise/shared/links" %>
+</div>

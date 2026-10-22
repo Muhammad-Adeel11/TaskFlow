@@ -1,0 +1,137 @@
+<div class="dashboard-page">
+
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">MANAGEMENT</p>
+      <h1>Manager Dashboard</h1>
+      <p class="page-subtitle">
+        Monitor projects and task progress.
+      </p>
+    </div>
+
+    <%= link_to "New Project", "/projects/new", class: "primary-button" %>
+  </div>
+
+  <div class="dashboard-stats">
+
+    <div class="stat-card">
+      <span class="stat-label">Projects</span>
+      <strong><%= @total_projects %></strong>
+    </div>
+
+    <div class="stat-card">
+      <span class="stat-label">Total Tasks</span>
+      <strong><%= @total_tasks %></strong>
+    </div>
+
+    <div class="stat-card">
+      <span class="stat-label">Pending</span>
+      <strong><%= @pending_tasks %></strong>
+    </div>
+
+    <div class="stat-card">
+      <span class="stat-label">In Progress</span>
+      <strong><%= @in_progress_tasks %></strong>
+    </div>
+
+    <div class="stat-card">
+      <span class="stat-label">Completed</span>
+      <strong><%= @completed_tasks %></strong>
+    </div>
+
+    <div class="stat-card">
+      <span class="stat-label">Users</span>
+      <strong><%= @total_users %></strong>
+    </div>
+
+  </div>
+
+
+  <div class="dashboard-columns">
+
+    <section class="dashboard-panel">
+
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">RECENT</p>
+          <h2>Projects</h2>
+        </div>
+
+        <%= link_to "All Projects", projects_path, class: "text-link" %>
+      </div>
+
+      <div class="compact-grid">
+
+        <% @recent_projects.each do |project| %>
+
+          <div class="compact-card">
+
+            <div class="project-icon">
+              P
+            </div>
+
+            <div class="compact-content">
+
+              <h3>
+                <%= link_to project.name, project_path(project) %>
+              </h3>
+
+              <p>
+                <%= truncate(project.description.to_s, length: 80) %>
+              </p>
+
+              <span class="small-meta">
+                <%= pluralize(project.tasks.count, "task") %>
+              </span>
+
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+
+    </section>
+
+
+    <section class="dashboard-panel">
+
+      <div class="panel-heading">
+
+        <div>
+          <p class="eyebrow">RECENT</p>
+          <h2>Tasks</h2>
+        </div>
+
+      </div>
+
+      <div class="compact-task-grid">
+
+        <% @recent_tasks.each do |task| %>
+
+          <div class="compact-task-card">
+
+            <div>
+              <h3><%= task.title %></h3>
+
+              <p>
+                <%= task.user&.name || "Unassigned" %>
+              </p>
+            </div>
+
+            <span class="status-badge status-<%= task.status %>">
+              <%= task.status.humanize %>
+            </span>
+
+          </div>
+
+        <% end %>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</div>

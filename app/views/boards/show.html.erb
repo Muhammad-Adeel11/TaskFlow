@@ -1,0 +1,65 @@
+<div class="project-header">
+  <div>
+    <p class="eyebrow">BOARD</p>
+    <h1><%= @project.name %></h1>
+    <p class="project-header-description">Drag cards between columns to update their status.</p>
+  </div>
+
+  <div class="project-actions">
+
+    <%= link_to "List view", project_path(@project), class: "secondary-button" %>
+    <%= link_to "Calendar", project_calendar_path(@project), class: "secondary-button" %>
+
+    <% if params[:mine] == "1" %>
+      <%= link_to "All tasks", project_board_path(@project), class: "secondary-button" %>
+    <% else %>
+      <%= link_to "My tasks only", project_board_path(@project, mine: 1), class: "secondary-button" %>
+    <% end %>
+
+    <% if policy(Task).create? %>
+      <%= link_to "＋ New Task", new_project_task_path(@project), class: "primary-button" %>
+    <% end %>
+  </div>
+</div>
+
+<div class="kanban" data-controller="sortable">
+  <% [["pending", "Pending"], ["in_progress", "In Progress"], ["completed", "Completed"]].each do |status, title| %>
+    <% column_tasks = @tasks_by_status.fetch(status, []) %>
+
+    <section class="kanban-column">
+      <header class="kanban-column-header">
+        <h2><%= title %></h2>
+        <span class="kanban-count" data-sortable-target="count" data-status="<%= status %>">
+          <%= column_tasks.size %>
+        </span>
+      </header>
+
+      <div class="kanban-list" data-sortable-target="list" data-status="<%= status %>">
+        <% column_tasks.each do |task| %>
+          <% overdue = task.due_date.present? && task.due_date < Date.current && task.status != "completed" %>
+
+          <article class="kanban-card"
+                   data-move-url="<%= move_project_task_path(@project, task) %>"
+                   data-movable="<%= policy(task).move? %>">
+            <h3><%= task.title %></h3>
+
+            <div class="kanban-card-meta">
+                <span class="kanban-assignee">
+                <%= user_avatar(task.user, size: 20) if task.user %>
+                <%= task.user&.name || "Unassigned" %>
+              </span>
+
+              <span class="<%= "kanban-overdue" if overdue %>">
+                <%= task.due_date ? task.due_date.strftime("%d %b") : "No date" %>
+              </span>
+            </div>
+
+            <% if policy(task).update? %>
+              <%= link_to "Edit", edit_project_task_path(@project, task), class: "view-link" %>
+            <% end %>
+          </article>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</div>

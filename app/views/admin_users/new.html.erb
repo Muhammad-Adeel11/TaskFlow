@@ -1,0 +1,71 @@
+<div class="form-page">
+
+  <div class="form-heading">
+    <p class="eyebrow">TEAM MANAGEMENT</p>
+    <h1>Add User</h1>
+    <p>Create a new user or manager.</p>
+  </div>
+
+  <div class="form-card">
+
+    <%= form_with model: @user, url: admin_users_path do |form| %>
+
+      <% if @user.errors.any? %>
+
+        <div class="form-errors">
+          <strong>Please fix the following:</strong>
+
+          <ul>
+            <% @user.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+
+      <% end %>
+
+      <div class="form-field">
+        <%= form.label :name, "Full Name" %>
+        <%= form.text_field :name, required: true %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :email, "Email" %>
+        <%= form.email_field :email, required: true %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :password, "Password" %>
+        <%= form.password_field :password, required: true %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :password_confirmation, "Confirm Password" %>
+        <%= form.password_field :password_confirmation, required: true %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :role, "Role" %>
+
+        <%= form.select :role,
+            [["User", "user"],
+             ["Manager", "manager"]],
+            { selected: "user" } %>
+      </div>
+
+      <div class="form-actions">
+
+        <%= link_to "Cancel",
+            users_path,
+            class: "cancel-button" %>
+
+        <%= form.submit "Create User",
+            class: "primary-button" %>
+
+      </div>
+
+    <% end %>
+
+  </div>
+
+</div>

@@ -1,0 +1,40 @@
+<div class="form-page">
+  <div class="form-heading">
+    <p class="eyebrow">NEW PROJECT</p>
+    <h1>Create a Project</h1>
+    <p>Set up a project and start organizing your work.</p>
+  </div>
+
+  <div class="form-card">
+    <%= form_with model: @project do |form| %>
+      <% if @project.errors.any? %>
+        <div class="form-errors">
+          <strong>Please fix the following:</strong>
+
+          <ul>
+            <% @project.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-field">
+        <%= form.label :name, "Project Name" %>
+        <%= form.text_field :name, placeholder: "e.g. Website Redesign" %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :description, "Description" %>
+        <%= form.text_area :description,
+            placeholder: "What is this project about?",
+            rows: 5 %>
+      </div>
+
+      <div class="form-actions">
+        <%= link_to "Cancel", projects_path, class: "cancel-button" %>
+        <%= form.submit "Create Project", class: "primary-button" %>
+      </div>
+    <% end %>
+  </div>
+</div>

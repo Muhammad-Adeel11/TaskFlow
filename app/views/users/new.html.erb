@@ -1,0 +1,78 @@
+<div class="auth-page">
+
+  <div class="auth-card">
+
+    <div class="auth-heading">
+      <p class="eyebrow">TASKFLOW</p>
+
+      <h1>Create your account</h1>
+
+      <p>
+        Register to start managing your projects and tasks.
+      </p>
+    </div>
+
+    <% if @user.errors.any? %>
+      <div class="form-errors">
+
+        <strong>Please fix the following:</strong>
+
+        <ul>
+          <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+
+      </div>
+    <% end %>
+
+    <%= form_with model: @user, url: register_path do |form| %>
+
+      <div class="form-field">
+        <%= form.label :name, "Full Name" %>
+
+        <%= form.text_field :name,
+            placeholder: "e.g. Muhammad Adeel",
+            required: true %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :email, "Email" %>
+
+        <%= form.email_field :email,
+            placeholder: "you@example.com",
+            required: true %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :password, "Password" %>
+
+        <%= form.password_field :password,
+            placeholder: "Create a password",
+            required: true %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :password_confirmation, "Confirm Password" %>
+
+        <%= form.password_field :password_confirmation,
+            placeholder: "Confirm your password",
+            required: true %>
+      </div>
+
+      <div class="auth-actions">
+        <%= form.submit "Create Account",
+            class: "primary-button" %>
+      </div>
+
+    <% end %>
+
+    <p class="auth-switch">
+      Already have an account?
+
+      <%= link_to "Sign in", login_path %>
+    </p>
+
+  </div>
+
+</div>

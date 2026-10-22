@@ -1,0 +1,38 @@
+<div class="form-page">
+  <div class="form-heading">
+    <p class="eyebrow">EDIT PROJECT</p>
+    <h1>Update Project</h1>
+    <p>Make changes to your project details.</p>
+  </div>
+
+  <div class="form-card">
+    <%= form_with model: @project do |form| %>
+      <% if @project.errors.any? %>
+        <div class="form-errors">
+          <strong>Please fix the following:</strong>
+
+          <ul>
+            <% @project.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-field">
+        <%= form.label :name, "Project Name" %>
+        <%= form.text_field :name %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :description, "Description" %>
+        <%= form.text_area :description, rows: 5 %>
+      </div>
+
+      <div class="form-actions">
+        <%= link_to "Cancel", project_path(@project), class: "cancel-button" %>
+        <%= form.submit "Update Project", class: "primary-button" %>
+      </div>
+    <% end %>
+  </div>
+</div>

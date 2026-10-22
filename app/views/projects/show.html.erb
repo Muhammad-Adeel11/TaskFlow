@@ -1,0 +1,139 @@
+<div class="project-header">
+  <div>
+    <p class="eyebrow">PROJECT</p>
+
+    <h1><%= @project.name %></h1>
+    <p class="project-header-description">
+      <%= @project.description.presence || "No description added yet." %>
+    </p>
+  </div>
+
+  <div class="project-actions">
+    <%= link_to "Board view", project_board_path(@project), class: "secondary-button" %>
+    <%= link_to "Calendar", project_calendar_path(@project), class: "secondary-button" %>
+    <%= link_to "Download PDF",
+      project_path(@project, request.query_parameters.symbolize_keys.merge(format: :pdf)),
+      class: "secondary-button" %>
+    
+    <% if policy(@project).update? %>
+    <%= link_to "Edit Project", edit_project_path(@project), class: "secondary-button" %>
+    <% end %>
+    
+    <% if policy(@project).destroy? %>
+    <%= button_to "Delete Project",
+        project_path(@project),
+        method: :delete,
+        class: "danger-button",
+        form: { data: { turbo_confirm: "Delete this project and all of its tasks? This cannot be undone." } } %>
+    <% end %>
+  </div>
+
+</div>
+
+<section class="tasks-section">
+  <div class="section-heading">
+    <div>
+      <h2>Tasks</h2>
+      <p>Manage the work inside this project.</p>
+    </div>
+    
+    <% if policy(Task).create? %>
+    <%= link_to "＋ New Task", "/projects/#{@project.id}/tasks/new", class: "primary-button" %>
+    <% end %>
+
+  </div>
+  <%= render "tasks/filters", q: @q, url: project_path(@project), users: @users %>
+  <% if @tasks.any? %>
+    <div class="task-list">
+      <% @tasks.each do |task| %>
+        <article class="task-card">
+          <div class="task-main">
+            <h3><%= task.title %></h3>
+
+            <p>
+              <%= task.description.presence || "No description added." %>
+            </p>
+          </div>
+
+          <div class="task-info">
+            <span class="status-badge status-<%= task.status %>">
+              <%= task.status.humanize %>
+            </span>
+
+            <span class="due-date">
+              <%= task.due_date ? task.due_date.strftime("%d %b %Y") : "No due date" %>
+            </span>
+          </div>
+
+          <div class="task-actions">
+            <% if policy(task).update? %>
+            <%= link_to "Edit", edit_project_task_path(@project, task), class: "view-link" %>
+            <% end %>
+            
+            <% if policy(task).destroy? %>
+            <%= button_to "Delete", project_task_path(@project, task), method: :delete, class: "danger-button",
+            form: { data: { turbo_confirm: "Are you sure?" } } %>
+            <% end %>
+          </div>
+
+        </article>
+      <% end %>
+    </div>
+
+    <div class="pagination">
+      <%= paginate @tasks %>
+    </div>
+    
+<% else %>
+  <div class="empty-state task-empty">
+    <div class="empty-icon">✓</div>
+    <% if filters_active? %>
+      <h2>No tasks match your filters</h2>
+      <%= link_to "Clear filters", project_path(@project), class: "secondary-button" %>
+    <% else %>
+      <h2>No tasks yet</h2>
+      <p>Add a task to start working on this project.</p>
+      <% if policy(Task).create? %> 
+      <%= link_to "Create First Task", "/projects/#{@project.id}/tasks/new", class: "primary-button" %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<section class="tasks-section members-section">
+  <div class="section-heading">
+    <div>
+      <h2>Members</h2>
+      <p>People who can access this project.</p>
+    </div>
+  </div>
+
+  <% if @memberships.any? %>
+    <div class="member-list">
+      <% @memberships.each do |membership| %>
+        <div class="member-chip">
+          <span class="member-name"><%= membership.user.name %></span>
+
+          <% if policy(@project).manage_members? %>
+            <%= button_to "Remove",
+                project_membership_path(@project, membership),
+                method: :delete,
+                class: "danger-button",
+                form: { data: { turbo_confirm: "Remove #{membership.user.name} from this project?" } } %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="page-subtitle">No members yet. Managers and admins can always see this project.</p>
+  <% end %>
+
+  <% if policy(@project).manage_members? && @available_users.any? %>
+    <%= form_with url: project_memberships_path(@project), method: :post, class: "member-form" do |f| %>
+      <%= f.select :user_id, options_from_collection_for_select(@available_users, :id, :name), { prompt: "Select a user" } %>
+      <%= f.submit "Add member", class: "secondary-button" %>
+    <% end %>
+  <% end %>
+</section>
+
+</section>

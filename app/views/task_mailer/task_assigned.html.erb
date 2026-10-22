@@ -1,0 +1,31 @@
+<h1>New Task Assigned</h1>
+
+<p>Hello <%= @user.name %>,</p>
+
+<p>
+  You have been assigned a new task in TaskFlow.
+</p>
+
+<p>
+  <strong>Project:</strong>
+  <%= @project.name %>
+</p>
+
+<p>
+  <strong>Task:</strong>
+  <%= @task.title %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @task.status.humanize %>
+</p>
+
+<p>
+  <strong>Due Date:</strong>
+  <%= @task.due_date || "Not specified" %>
+</p>
+
+<p>
+  <%= link_to "View My Tasks", my_tasks_url %>
+</p>

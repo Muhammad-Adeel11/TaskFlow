@@ -1,0 +1,53 @@
+<%# locals: q (required), url (required), users (optional), projects (optional) %>
+<%= search_form_for q, url: url, html: { class: "filter-bar" } do |f| %>
+
+  <div class="form-field filter-search">
+    <%= f.label :title_or_description_cont, "Search" %>
+    <%= f.search_field :title_or_description_cont, placeholder: "Title or description…" %>
+  </div>
+
+  <div class="form-field">
+    <%= f.label :status_eq, "Status" %>
+    <%= f.select :status_eq,
+        [["Pending", "pending"], ["In Progress", "in_progress"], ["Completed", "completed"]],
+        { include_blank: "All" } %>
+  </div>
+
+  <div class="form-field">
+    <%= f.label :due_bucket, "Due" %>
+    <%= f.select :due_bucket,
+        [["Overdue", "overdue"], ["Due today", "today"],
+         ["Due this week", "this_week"], ["No due date", "no_date"]],
+        { include_blank: "Any time" } %>
+  </div>
+
+  <% if local_assigns[:users] %>
+    <div class="form-field">
+      <%= f.label :user_id_eq, "Assignee" %>
+      <%= f.select :user_id_eq, users.map { |u| [u.name, u.id] }, { include_blank: "Everyone" } %>
+    </div>
+  <% end %>
+
+  <% if local_assigns[:projects] %>
+    <div class="form-field">
+      <%= f.label :project_id_eq, "Project" %>
+      <%= f.select :project_id_eq, projects.map { |p| [p.name, p.id] }, { include_blank: "All projects" } %>
+    </div>
+  <% end %>
+
+  <div class="form-field">
+    <%= label_tag "q_s", "Sort by" %>
+    <%= select_tag "q[s]",
+        options_for_select(
+          [["Due date (soonest)", "due_date asc"], ["Due date (latest)", "due_date desc"],
+           ["Newest", "created_at desc"], ["Title A–Z", "title asc"]],
+          params.dig(:q, :s)
+        ),
+        id: "q_s" %>
+  </div>
+
+  <div class="filter-actions">
+    <%= f.submit "Apply", class: "primary-button" %>
+    <%= link_to "Clear", url, class: "cancel-button" %>
+  </div>
+<% end %>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Task Management App" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Task Management App">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%# Apply the saved theme before the page paints, so there is no light/dark flash %>
+    <%= javascript_tag nonce: true do %>
+      (function () {
+        try {
+          var theme = localStorage.getItem("theme");
+          if (!theme) {
+            theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          }
+          document.documentElement.dataset.theme = theme;
+        } catch (e) {}
+      })();
+    <% end %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/images.png" type="image/png">
+    <link rel="icon" href="/images.png" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/images.png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload", preload_links_header: false %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+      <% if current_user %>
+      <%# invisible strip along the bottom edge that reveals the dock on hover %>
+      <div class="dock-zone" aria-hidden="true"></div>
+
+      <header class="app-header dock">
+        <div class="dock-inner">
+          <%= link_to "TaskFlow", projects_path, class: "app-logo dock-brand" %>
+
+          <nav class="dock-nav" aria-label="Main">
+            <%= nav_link "Projects", projects_path %>
+            <%= nav_link "My Tasks", my_tasks_path %>
+
+            <% if current_user.manager? %>
+              <%= nav_link "Dashboard", dashboard_path %>
+            <% end %>
+
+            <% if current_user.admin? %>
+              <%= nav_link "Admin", admin_dashboard_path %>
+              <%= nav_link "Users", users_path, exact: true %>
+            <% end %>
+          </nav>
+
+          <div class="dock-tools">
+            <button type="button" class="nav-icon-button"
+                    data-controller="theme"
+                    data-action="theme#toggle"
+                    aria-label="Toggle dark mode"
+                    title="Toggle dark mode">
+              <span data-theme-target="label">☾</span>
+            </button>
+
+            <%= link_to user_path(current_user),
+                class: ["dock-profile", ("is-active" if request.path == user_path(current_user))],
+                title: "Your profile" do %>
+              <%= user_avatar(current_user, size: 28) %>
+              <span><%= current_user.name.to_s.split.first %></span>
+            <% end %>
+
+            <%= button_to "Log out", destroy_user_session_path, method: :delete, class: "nav-button" %>
+          </div>
+        </div>
+      </header>
+    <% end %>
+
+    <main class="main-content">
+      <% if notice %><div class="flash flash-notice"><%= notice %></div><% end %>
+      <% if alert %><div class="flash flash-alert"><%= alert %></div><% end %>
+
+      <%= yield %>
+    </main>
+  </body>
+</html>
