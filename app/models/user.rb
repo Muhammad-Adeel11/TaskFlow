@@ -11,6 +11,7 @@ class User < ApplicationRecord
   has_many :tasks, dependent: :nullify
   has_many :memberships, dependent: :destroy
   has_many :member_projects, through: :memberships, source: :project
+  has_one :google_connection, dependent: :destroy
   
   has_one_attached :avatar
   validate :avatar_must_be_a_small_image

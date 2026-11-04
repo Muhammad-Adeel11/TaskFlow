@@ -8,4 +8,6 @@
   <%= link_to "List view", my_tasks_path, class: "secondary-button" %>
 </div>
 
-<%= render "calendars/month", tasks: @tasks %>
+<%= render "calendars/google_bar", error: @google_error %>
+
+<%= render "calendars/month", entries: @entries %>

@@ -14,6 +14,8 @@
     <%= link_to "Download PDF",
       project_path(@project, request.query_parameters.symbolize_keys.merge(format: :pdf)),
       class: "secondary-button" %>
+    <%= link_to "Download Excel", project_path(@project, request.query_parameters.symbolize_keys.merge(format: :xlsx)), 
+      class: "secondary-button" %>
     
     <% if policy(@project).update? %>
     <%= link_to "Edit Project", edit_project_path(@project), class: "secondary-button" %>

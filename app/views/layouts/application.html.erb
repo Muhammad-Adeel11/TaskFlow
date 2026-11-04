@@ -19,6 +19,17 @@
           }
           document.documentElement.dataset.theme = theme;
         } catch (e) {}
+
+        // remember the sidebar state and the list / grid choices
+        try {
+          if (localStorage.getItem("sidebar") === "pinned") {
+            document.documentElement.dataset.sidebar = "pinned";
+          }
+          ["Projects", "Users", "Tasks"].forEach(function (name) {
+            var mode = localStorage.getItem("view-" + name.toLowerCase());
+            if (mode === "grid") document.documentElement.dataset["view" + name] = "grid";
+          });
+        } catch (e) {}
       })();
     <% end %>
 
@@ -35,52 +46,119 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-      <% if current_user %>
-      <%# invisible strip along the bottom edge that reveals the dock on hover %>
-      <div class="dock-zone" aria-hidden="true"></div>
+  <body class="<%= current_user ? 'has-shell' : 'is-guest' %>" data-controller="sidebar">
+    <% if current_user %>
 
-      <header class="app-header dock">
-        <div class="dock-inner">
-          <%= link_to "TaskFlow", projects_path, class: "app-logo dock-brand" %>
+      <%# compact top bar, shown on phones and tablets only %>
+      <header class="mobile-bar">
+        <%= link_to "TaskFlow", projects_path, class: "brand" %>
 
-          <nav class="dock-nav" aria-label="Main">
-            <%= nav_link "Projects", projects_path %>
-            <%= nav_link "My Tasks", my_tasks_path %>
+        <div class="mobile-actions">
+          <button type="button" class="icon-button"
+                  data-controller="theme"
+                  data-action="theme#toggle"
+                  aria-label="Toggle dark mode"
+                  title="Toggle dark mode">
+            <span data-theme-target="label">☾</span>
+          </button>
 
-            <% if current_user.manager? %>
-              <%= nav_link "Dashboard", dashboard_path %>
-            <% end %>
+          <%= link_to user_path(current_user), class: "mobile-profile", title: "Your profile" do %>
+            <%= user_avatar(current_user, size: 32) %>
+          <% end %>
 
-            <% if current_user.admin? %>
-              <%= nav_link "Admin", admin_dashboard_path %>
-              <%= nav_link "Users", users_path, exact: true %>
-            <% end %>
-          </nav>
-
-          <div class="dock-tools">
-            <button type="button" class="nav-icon-button"
-                    data-controller="theme"
-                    data-action="theme#toggle"
-                    aria-label="Toggle dark mode"
-                    title="Toggle dark mode">
-              <span data-theme-target="label">☾</span>
-            </button>
-
-            <%= link_to user_path(current_user),
-                class: ["dock-profile", ("is-active" if request.path == user_path(current_user))],
-                title: "Your profile" do %>
-              <%= user_avatar(current_user, size: 28) %>
-              <span><%= current_user.name.to_s.split.first %></span>
-            <% end %>
-
-            <%= button_to "Log out", destroy_user_session_path, method: :delete, class: "nav-button" %>
-          </div>
+          <%= button_to "Log out", destroy_user_session_path, method: :delete, class: "ghost-button" %>
         </div>
       </header>
+
+      <%# hover over this pill or the left edge to peek at the sidebar; click to keep it open %>
+      <button type="button" class="side-trigger"
+              data-action="sidebar#toggle"
+              aria-label="Show sidebar"
+              title="Hover to peek, click to keep open">
+        <span class="side-icon"></span>
+        <span>TaskFlow</span>
+      </button>
+      <div class="side-zone" aria-hidden="true"></div>
+
+      <aside class="sidebar">
+        <div class="side-head">
+          <%= link_to "TaskFlow", projects_path, class: "brand" %>
+
+          <button type="button" class="side-pin"
+                  data-action="sidebar#toggle"
+                  aria-label="Keep sidebar open"
+                  title="Keep sidebar open">
+            <span class="side-icon"></span>
+          </button>
+        </div>
+
+        <nav class="side-nav" aria-label="Main">
+          <p class="side-label">Workspace</p>
+          <%= nav_link "Projects", projects_path %>
+          <%= nav_link "My Tasks", my_tasks_path %>
+
+          <% if current_user.manager? || current_user.admin? %>
+            <p class="side-label">Manage</p>
+          <% end %>
+
+          <% if current_user.manager? %>
+            <%= nav_link "Dashboard", dashboard_path %>
+          <% end %>
+
+          <% if current_user.admin? %>
+            <%= nav_link "Admin", admin_dashboard_path %>
+            <%= nav_link "Users", users_path, exact: true %>
+          <% end %>
+        </nav>
+
+        <div class="side-foot">
+          <button type="button" class="theme-toggle"
+                  data-controller="theme"
+                  data-action="theme#toggle"
+                  aria-label="Toggle dark mode"
+                  title="Toggle dark mode">
+            <span class="theme-icon" data-theme-target="label">☾</span>
+            <span class="theme-text">Appearance</span>
+          </button>
+
+          <%= link_to user_path(current_user),
+              class: ["profile-card", ("is-active" if request.path == user_path(current_user))],
+              title: "Your profile" do %>
+            <%= user_avatar(current_user, size: 36) %>
+            <span class="profile-text">
+              <strong><%= current_user.name.to_s.split.first %></strong>
+              <small><%= current_user.role.to_s.humanize %></small>
+            </span>
+          <% end %>
+
+          <%= button_to "Log out", destroy_user_session_path, method: :delete, class: "ghost-button" %>
+        </div>
+      </aside>
+
+    <% else %>
+
+      <%# brand panel beside the sign-in / sign-up forms %>
+      <aside class="auth-art" aria-hidden="true">
+        <div class="art-brand">TaskFlow</div>
+
+        <div class="art-copy">
+          <h2>Plan the work.<br>Ship it together.</h2>
+          <p>Projects, tasks and deadlines in one calm, organised workspace for your whole team.</p>
+        </div>
+
+        <div class="art-preview">
+          <div class="art-row"><span>Website redesign</span><b>72%</b></div>
+          <div class="art-bar"><i style="width: 72%"></i></div>
+          <div class="art-row"><span>Mobile app</span><b>45%</b></div>
+          <div class="art-bar"><i style="width: 45%"></i></div>
+          <div class="art-row"><span>Launch campaign</span><b>90%</b></div>
+          <div class="art-bar"><i style="width: 90%"></i></div>
+        </div>
+      </aside>
+
     <% end %>
 
-    <main class="main-content">
+    <main class="main-content" data-controller="view-switch">
       <% if notice %><div class="flash flash-notice"><%= notice %></div><% end %>
       <% if alert %><div class="flash flash-alert"><%= alert %></div><% end %>
 

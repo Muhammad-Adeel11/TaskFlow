@@ -5,15 +5,20 @@ gem "rails", "~> 8.1.3", ">= 8.1.3.1"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 # Use sqlite3 as the database for Active Record
-gem "sqlite3", ">= 2.1"
-gem "fiddle"
-gem "bcrypt", "~> 3.1.7"
+gem "sqlite3", ">= 2.1" #for database
+gem "fiddle" #for sqlite3
+gem "bcrypt", "~> 3.1.7" #for password hashing
 gem "kaminari" #for pagination
 gem "prawn" #for PDF generation
-gem "prawn-table"
+gem "caxlsx" #for Excel generation
+gem "prawn-table" #for PDF table generation
+gem "devise", "~> 5.0" #for user authentication
 gem "ransack" #for search and filtering
 gem "pundit" #for Perimission and Authorization
 gem "simple_calendar", "~> 3.0" #for calendar view
+gem "google-apis-calendar_v3" # Google Calendar API
+gem "googleauth" # Google sign-in (OAuth)
+
 
 gem "dotenv-rails", groups: [:development, :test]
 # Use the Puma web server [https://github.com/puma/puma]
@@ -75,4 +80,4 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "devise", "~> 5.0" #for user authentication
+

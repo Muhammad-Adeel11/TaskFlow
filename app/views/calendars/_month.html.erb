@@ -1,14 +1,13 @@
 <div class="calendar-wrap">
-  <%= month_calendar(attribute: :due_date, events: tasks) do |date, day_tasks| %>
+  <%= month_calendar(attribute: :start_time, events: entries) do |date, day_entries| %>
     <div class="cal-day-number"><%= date.day %></div>
 
-    <% day_tasks.each do |task| %>
-      <% overdue = task.due_date < Date.current && task.status != "completed" %>
-
-      <%= link_to task.title,
-          project_path(task.project_id),
-          class: "cal-task is-#{task.status} #{'is-overdue' if overdue}",
-          title: "#{task.title} · #{task.status.humanize} · #{task.user&.name || 'Unassigned'}" %>
+    <% day_entries.each do |entry| %>
+      <%= link_to entry.title, entry.link,
+          class: ["cal-task", "is-#{entry.status}", ("is-overdue" if entry.overdue), ("is-team" if entry.source == :team)],
+          target: (entry.external ? "_blank" : nil),
+          rel: (entry.external ? "noopener" : nil),
+          title: entry.tooltip %>
     <% end %>
   <% end %>
 </div>

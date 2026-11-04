@@ -1,0 +1,31 @@
+<% connection = current_user.google_connection %>
+
+<% if error.present? %>
+  <div class="flash flash-alert"><%= error %></div>
+<% end %>
+
+<div class="google-bar <%= 'is-connected' if connection %>">
+  <div class="google-bar-text">
+    <strong><%= connection ? "Google Calendar is connected" : "Connect Google Calendar" %></strong>
+    <span>
+      <% if connection %>
+        Tasks with a due date appear in a "TaskFlow" calendar in your Google account, and this page reads them from Google.
+      <% else %>
+        See your tasks in Google Calendar on every device. Showing saved tasks until you connect.
+      <% end %>
+    </span>
+  </div>
+
+  <div class="google-bar-actions">
+    <% if connection %>
+      <%= link_to "Open Google Calendar", "https://calendar.google.com/calendar/u/0/r",
+          target: "_blank", rel: "noopener", class: "secondary-button" %>
+      <%= button_to "Sync now", sync_google_calendar_path, method: :post, class: "secondary-button" %>
+      <%= button_to "Disconnect", disconnect_google_calendar_path, method: :delete, class: "danger-button",
+          form: { data: { turbo_confirm: "Disconnect Google Calendar?" } } %>
+    <% else %>
+      <%= link_to "Connect Google Calendar", connect_google_calendar_path,
+          class: "primary-button", data: { turbo: false } %>
+    <% end %>
+  </div>
+</div>

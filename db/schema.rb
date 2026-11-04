@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_15_114448) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_03_090000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -39,6 +39,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_114448) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "google_connections", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.text "access_token"
+    t.text "refresh_token", null: false
+    t.datetime "expires_at"
+    t.string "calendar_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_google_connections_on_user_id", unique: true
+  end
+
   create_table "memberships", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "project_id", null: false
@@ -65,6 +76,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_114448) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+    t.string "google_event_id"
+    t.integer "google_event_user_id"
     t.index ["project_id"], name: "index_tasks_on_project_id"
     t.index ["user_id"], name: "index_tasks_on_user_id"
   end
@@ -94,6 +107,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_114448) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "google_connections", "users"
   add_foreign_key "memberships", "projects"
   add_foreign_key "memberships", "users"
   add_foreign_key "tasks", "projects"

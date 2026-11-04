@@ -1,135 +1,181 @@
+<%# Presentation only: percentages are calculated here from the numbers the controller already provides %>
+<% total      = @total_tasks.to_i %>
+<% percent_of = ->(count) { total.zero? ? 0 : (count.to_i * 100.0 / total).round } %>
+<% done_pct   = percent_of.call(@completed_tasks) %>
+<% prog_pct   = percent_of.call(@in_progress_tasks) %>
+<% pend_pct   = percent_of.call(@pending_tasks) %>
+
 <div class="dashboard-page">
 
   <div class="page-heading">
     <div>
-      <p class="eyebrow">MANAGEMENT</p>
-      <h1>Manager Dashboard</h1>
+      <p class="eyebrow">Management</p>
+      <h1>Welcome back, <%= current_user.name.to_s.split.first %></h1>
       <p class="page-subtitle">
-        Monitor projects and task progress.
+        Here is what is happening across your projects and tasks.
       </p>
     </div>
 
-    <%= link_to "New Project", "/projects/new", class: "primary-button" %>
+    <div class="heading-actions">
+      <%= link_to "All projects", projects_path, class: "secondary-button" %>
+      <%= link_to "New Project", "/projects/new", class: "primary-button" %>
+    </div>
   </div>
 
-  <div class="dashboard-stats">
+  <div class="kpi-grid">
 
-    <div class="stat-card">
-      <span class="stat-label">Projects</span>
-      <strong><%= @total_projects %></strong>
+    <div class="kpi">
+      <div class="kpi-top">
+        <span class="kpi-label">Projects</span>
+        <span class="kpi-icon icon-folder"></span>
+      </div>
+      <strong class="kpi-value"><%= @total_projects %></strong>
+      <p class="kpi-note">Active in the workspace</p>
     </div>
 
-    <div class="stat-card">
-      <span class="stat-label">Total Tasks</span>
-      <strong><%= @total_tasks %></strong>
+    <div class="kpi">
+      <div class="kpi-top">
+        <span class="kpi-label">Total tasks</span>
+        <span class="kpi-icon icon-tasks"></span>
+      </div>
+      <strong class="kpi-value"><%= @total_tasks %></strong>
+      <p class="kpi-note"><%= @pending_tasks %> waiting to start</p>
     </div>
 
-    <div class="stat-card">
-      <span class="stat-label">Pending</span>
-      <strong><%= @pending_tasks %></strong>
+    <div class="kpi">
+      <div class="kpi-top">
+        <span class="kpi-label">Team members</span>
+        <span class="kpi-icon icon-users"></span>
+      </div>
+      <strong class="kpi-value"><%= @total_users %></strong>
+      <p class="kpi-note">People in the system</p>
     </div>
 
-    <div class="stat-card">
-      <span class="stat-label">In Progress</span>
-      <strong><%= @in_progress_tasks %></strong>
-    </div>
-
-    <div class="stat-card">
-      <span class="stat-label">Completed</span>
-      <strong><%= @completed_tasks %></strong>
-    </div>
-
-    <div class="stat-card">
-      <span class="stat-label">Users</span>
-      <strong><%= @total_users %></strong>
+    <div class="kpi">
+      <div class="kpi-top">
+        <span class="kpi-label">Completion</span>
+        <span class="kpi-icon icon-pulse"></span>
+      </div>
+      <strong class="kpi-value"><%= done_pct %><small>%</small></strong>
+      <div class="meter" role="img" aria-label="<%= done_pct %> percent of tasks completed">
+        <span style="width: <%= done_pct %>%;"></span>
+      </div>
     </div>
 
   </div>
 
+  <div class="dash-grid">
 
-  <div class="dashboard-columns">
-
-    <section class="dashboard-panel">
-
-      <div class="panel-heading">
+    <section class="panel span-5">
+      <div class="panel-head">
         <div>
-          <p class="eyebrow">RECENT</p>
-          <h2>Projects</h2>
+          <p class="eyebrow">Overview</p>
+          <h2>Task status</h2>
+        </div>
+      </div>
+
+      <div class="status-chart">
+        <div class="donut-wrap">
+          <div class="donut <%= 'is-empty' if total.zero? %>"
+               style="--done: <%= done_pct %>; --prog: <%= prog_pct %>;"
+               role="img"
+               aria-label="<%= @completed_tasks %> completed, <%= @in_progress_tasks %> in progress, <%= @pending_tasks %> pending"></div>
+          <div class="donut-center">
+            <strong><%= @total_tasks %></strong>
+            <span>Tasks</span>
+          </div>
         </div>
 
-        <%= link_to "All Projects", projects_path, class: "text-link" %>
+        <ul class="legend">
+          <li>
+            <span class="dot dot-pending"></span>
+            <span class="legend-label">Pending</span>
+            <span class="legend-value"><%= @pending_tasks %></span>
+            <span class="legend-pct"><%= pend_pct %>%</span>
+          </li>
+          <li>
+            <span class="dot dot-progress"></span>
+            <span class="legend-label">In progress</span>
+            <span class="legend-value"><%= @in_progress_tasks %></span>
+            <span class="legend-pct"><%= prog_pct %>%</span>
+          </li>
+          <li>
+            <span class="dot dot-done"></span>
+            <span class="legend-label">Completed</span>
+            <span class="legend-value"><%= @completed_tasks %></span>
+            <span class="legend-pct"><%= done_pct %>%</span>
+          </li>
+        </ul>
       </div>
-
-      <div class="compact-grid">
-
-        <% @recent_projects.each do |project| %>
-
-          <div class="compact-card">
-
-            <div class="project-icon">
-              P
-            </div>
-
-            <div class="compact-content">
-
-              <h3>
-                <%= link_to project.name, project_path(project) %>
-              </h3>
-
-              <p>
-                <%= truncate(project.description.to_s, length: 80) %>
-              </p>
-
-              <span class="small-meta">
-                <%= pluralize(project.tasks.count, "task") %>
-              </span>
-
-            </div>
-
-          </div>
-
-        <% end %>
-
-      </div>
-
     </section>
 
-
-    <section class="dashboard-panel">
-
-      <div class="panel-heading">
-
+    <section class="panel span-7">
+      <div class="panel-head">
         <div>
-          <p class="eyebrow">RECENT</p>
-          <h2>Tasks</h2>
+          <p class="eyebrow">Latest</p>
+          <h2>Recent tasks</h2>
+        </div>
+      </div>
+
+      <% if @recent_tasks.any? %>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Project</th>
+              <th class="align-right">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @recent_tasks.each do |task| %>
+              <tr>
+                <td>
+                  <span class="cell-title"><%= task.title %></span>
+                  <span class="cell-sub"><%= task.user&.name || "Unassigned" %></span>
+                </td>
+                <td class="cell-muted"><%= task.project.name %></td>
+                <td class="align-right">
+                  <span class="status-badge status-<%= task.status %>">
+                    <%= task.status.to_s.humanize %>
+                  </span>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="panel-empty">No tasks yet.</p>
+      <% end %>
+    </section>
+
+    <section class="panel span-12">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Latest</p>
+          <h2>Recent projects</h2>
         </div>
 
+        <%= link_to "View all", projects_path, class: "text-link" %>
       </div>
 
-      <div class="compact-task-grid">
+      <% if @recent_projects.any? %>
+        <ul class="rows">
+          <% @recent_projects.each do |project| %>
+            <li class="row-item">
+              <span class="project-icon"><%= project.name.to_s.first.to_s.upcase %></span>
 
-        <% @recent_tasks.each do |task| %>
+              <div class="row-main">
+                <%= link_to project.name, project_path(project), class: "row-title" %>
+                <span class="row-sub"><%= truncate(project.description.to_s, length: 90) %></span>
+              </div>
 
-          <div class="compact-task-card">
-
-            <div>
-              <h3><%= task.title %></h3>
-
-              <p>
-                <%= task.user&.name || "Unassigned" %>
-              </p>
-            </div>
-
-            <span class="status-badge status-<%= task.status %>">
-              <%= task.status.humanize %>
-            </span>
-
-          </div>
-
-        <% end %>
-
-      </div>
-
+              <span class="row-meta"><%= pluralize(project.tasks.count, "task") %></span>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="panel-empty">No projects yet.</p>
+      <% end %>
     </section>
 
   </div>

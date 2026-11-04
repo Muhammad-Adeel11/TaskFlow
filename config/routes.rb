@@ -66,4 +66,10 @@ Rails.application.routes.draw do
   get  "/admin",           to: "admin#index",       as: :admin_dashboard
   get  "/admin/users/new", to: "admin_users#new",   as: :new_admin_user
   post "/admin/users",     to: "admin_users#create", as: :admin_users
+
+  # ---------- Google Calendar connection ----------
+  get    "/google_calendar/connect",  to: "google_calendars#connect",  as: :connect_google_calendar
+  get    "/google_calendar/callback", to: "google_calendars#callback", as: :google_calendar_callback
+  post   "/google_calendar/sync",     to: "google_calendars#sync",     as: :sync_google_calendar
+  delete "/google_calendar",          to: "google_calendars#destroy",  as: :disconnect_google_calendar
 end

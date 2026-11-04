@@ -40,11 +40,19 @@ class ProjectsController < ApplicationController
       end
 
       format.pdf do
-        send_data ProjectReportPdf.new(@project, @q.result.includes(:user)).render,
-                  filename: "#{@project.name.parameterize}-report.pdf",
-                  type: "application/pdf",
-                  disposition: "attachment"
+        send_data ProjectReportPdf.new(@project, @q.result.includes(:user), generated_by: current_user).render,
+                filename: "#{@project.name.parameterize}-report.pdf",
+                type: "application/pdf",
+                disposition: "attachment"
       end
+      
+      format.xlsx do
+        send_data ProjectReportXlsx.new(@project, @q.result.includes(:user), generated_by: current_user).render,
+                filename: "#{@project.name.parameterize}-report.xlsx",
+                type: ProjectReportXlsx::CONTENT_TYPE,
+                disposition: "attachment"
+      end
+
     end
   end
 

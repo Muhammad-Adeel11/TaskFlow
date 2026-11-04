@@ -9,6 +9,9 @@ class Task < ApplicationRecord
 
   after_save :ensure_assignee_membership, if: -> { saved_change_to_user_id? && user_id.present? }
 
+  after_commit :push_to_google_calendar, on: %i[create update]
+  after_commit :remove_from_google_calendar, on: :destroy
+
   def self.ransackable_attributes(auth_object = nil)
     %w[title description status due_date user_id project_id created_at]
   end
@@ -34,5 +37,13 @@ class Task < ApplicationRecord
 
   def ensure_assignee_membership
     Membership.find_or_create_by!(project_id: project_id, user_id: user_id)
+  end
+
+  def push_to_google_calendar
+    GoogleCalendarSync.push(self)
+  end
+
+  def remove_from_google_calendar
+    GoogleCalendarSync.remove(self)
   end
 end
