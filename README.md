@@ -273,4 +273,4 @@ Distributed under the MIT License. See `LICENSE` for details.
 ## Author
 
 **<Your Name>**
-GitHub: [@<your-username>](https://github.com/<your-username>) | Email: <your-email>
+GitHub: Muhammad Adeel | Email: <adeelthana122@gmail>
